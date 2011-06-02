@@ -198,6 +198,7 @@ console.log("Showing workout for " + todaysDate);
 $("h4").append(todaysDate);
 
 // getting cookie values
+/*
 var nameSet = getCookie('tp_username');
 var passSet = getCookie('tp_password');
 
@@ -206,11 +207,13 @@ if((nameSet != null) && (passSet != null)) {
 } else {
   showForm();
 }
+*/
 
 // when login form is submitted OR if cookie with username/pass exists
 
-function showWorkout(){
+//function showWorkout(){
 
+$('#tp_submit').click(function() {
   var username = $('[name=username]').val();
 	var password = $('[name=password]').val();
 	
@@ -282,15 +285,7 @@ function showWorkout(){
     });
   }
 });
-}
 
-function showForm(){
-  $("#workouts").hide();
-  $("h4").hide();
-  $("#tp_form").show();
-}
-
-}
 
 });
 
