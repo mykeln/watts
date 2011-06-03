@@ -19,94 +19,22 @@
 <!-- styles -->
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/reset/reset-min.css">
 <style type="text/css">
-  body,html {
-    background-color: #efefef;
-  }
-  
-  h1 {
-    background: #733230;
-    padding: 20px;
-    text-align: center;
-    color: #fff;
-    font: Bold 30px/33px "Helvetica Neue", helvetica, arial, sans-serif;  
-  }
-  
-  h2 {
-      background: #67B2A6;
-      border-radius: 20px;
-      color: #FFFFFF;
-      font: bold 14px/17px "Helvetica Neue",helvetica,arial,sans-serif;
-      margin: -27px auto 0;
-      padding: 0;
-      position: relative;
-      text-align: center;
-      text-shadow: 2px 2px 0 #45867A;
-      top: 10px;
-      width: 100px;
-      z-index: 2;
-      padding: 5px;
-  }
-    
-  h4 {
-    color: #ccc;
-    text-align: center;
-    font: Bold 25px/28px "Helvetica Neue", helvetica, arial, sans-serif;
-    padding: 5px;
-  }
-  
-  p {
-    padding: 20px;
-    font: Normal 18px/21px "Helvetica Neue", helvetica, arial, sans-serif;
-    color: #fff;
-  }
-  
-  .warmup {
-    background: #ff4242;
-  }
-  
-  .workout {
-    background: #6cc792;
-  }
-  
-  .cooldown {
-    background: #33262E;
-  }
-  
-  #tp_form {
-    padding: 20px;
-    margin: 0px auto;
-    width: 280px;
-  }
-  
-  fieldset {
-    margin-bottom: 10px;
-  }
-  
-  input {
-    background: #fff;
-    border: 1px solid #ccc;
-    color: #444;
-    font: Normal 14px/17px "Helvetica Neue", helvetica, arial, sans-serif;
-    border-radius: 5px;
-    padding: 10px;
-    width: 260px;
-    margin: 10px auto 0px auto;
-  }
-
-  
-  #tp_submit {
-    background: #67B2A6;
-    border: 1px solid #45867A;
-    color: #fff;
-    font-weight: bold;
-    width: 280px;
-  }
-  
-    #tp_submit:hover {
-      background: #45867A;
-    }
-
+  body,html{background-color:#efefef;}
+  h1{background:#733230;padding:20px;text-align:center;color:#fff;font:Bold 30px/33px "Helvetica Neue",helvetica,arial,sans-serif;}
+  h2{background:#67B2A6;border-radius:20px;color:#FFFFFF;font:bold 14px/17px "Helvetica Neue",helvetica,arial,sans-serif;margin:-27px auto 0;padding:0;position:relative;text-align:center;text-shadow:2px 2px 0 #45867A;top:10px;width:100px;z-index:2;padding:5px;}
+  h4{color:#ccc;text-align:center;font:Bold 25px/28px "Helvetica Neue",helvetica,arial,sans-serif;padding:5px;}
+  p{padding:20px;font:Normal 18px/21px "Helvetica Neue",helvetica,arial,sans-serif;color:#fff;}
+  .warmup{background:#ff4242;}
+  .workout{background:#6cc792;}
+  .cooldown{background:#33262E;}
+  #tp_form{padding:20px;margin:0px auto;width:280px;}
+  fieldset{margin-bottom:10px;}
+  input{background:#fff;border:1px solid #ccc;color:#444;font:Normal 14px/17px "Helvetica Neue",helvetica,arial,sans-serif;border-radius:5px;padding:10px;width:260px;margin:10px auto 0px auto;}
+  #tp_submit{background:#67B2A6;border:1px solid #45867A;color:#fff;font-weight:bold;width:280px;}
+  #tp_submit:hover{background:#45867A;}
+  #workouts,h4,#tp_form{display:none;}
 </style>
+
 <!-- scripts -->
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 <script type="text/javascript" src="http://datejs.googlecode.com/files/date.js"></script>
@@ -117,7 +45,6 @@ $(function(){
   
   window.scrollTo(0, 1);
   
-  
 /*
 ////////////////////////////////////////
 ////////////////////////////////////////
@@ -126,59 +53,50 @@ UTILITY FUNCTIONS
 ////////////////////////////////////////
 */
 
-  var xmlDateToJavascriptDate = function(xmlDate) {
-    // It's times like these you wish Javascript supported multiline regex specs
-    var re = /^([0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]+)?(Z|([+-])([0-9]{2}):([0-9]{2}))?$/;
-    var match = xmlDate.match(re);
-    if (!match)
-      return null;
+var xmlDateToJavascriptDate = function(xmlDate) {
+  // It's times like these you wish Javascript supported multiline regex specs
+  var re = /^([0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]+)?(Z|([+-])([0-9]{2}):([0-9]{2}))?$/;
+  var match = xmlDate.match(re);
+  if (!match)
+    return null;
 
-    var all = match[0];
-    var year = match[1];  var month = match[2];  var day = match[3];
-    var hour = match[4];  var minute = match[5]; var second = match[6];
-    var milli = match[7]; 
-    var z_or_offset = match[8];  var offset_sign = match[9]; 
-    var offset_hour = match[10]; var offset_minute = match[11];
+  var all = match[0];
+  var year = match[1];  var month = match[2];  var day = match[3];
+  var hour = match[4];  var minute = match[5]; var second = match[6];
+  var milli = match[7]; 
+  var z_or_offset = match[8];  var offset_sign = match[9]; 
+  var offset_hour = match[10]; var offset_minute = match[11];
 
-    if (offset_sign) { // ended with +xx:xx or -xx:xx as opposed to Z or nothing
-      var direction = (offset_sign == "+" ? 1 : -1);
-      hour =   parseInt(hour)   + parseInt(offset_hour)   * direction;
-      minute = parseInt(minute) + parseInt(offset_minute) * direction;
-    }
-    var utcDate = Date.UTC(year, month, day, hour, minute, second, (milli || 0));
-    return new Date(utcDate);
+  if (offset_sign) { // ended with +xx:xx or -xx:xx as opposed to Z or nothing
+    var direction = (offset_sign == "+" ? 1 : -1);
+    hour =   parseInt(hour)   + parseInt(offset_hour)   * direction;
+    minute = parseInt(minute) + parseInt(offset_minute) * direction;
   }
-  
-  
-  
-  function setCookie(name,value,days) {
-      if (days) {
-          var date = new Date();
-          date.setTime(date.getTime()+(days*24*60*60*1000));
-          var expires = "; expires="+date.toGMTString();
-      }
-      else var expires = "";
-      document.cookie = name+"="+value+expires+"; path=/";
+  var utcDate = Date.UTC(year, month, day, hour, minute, second, (milli || 0));
+  return new Date(utcDate);
+}  
+function setCookie(name,value,days) {
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime()+(days*24*60*60*1000));
+    var expires = "; expires="+date.toGMTString();
   }
-  
-  
-
-  function getCookie(name) {
-      var nameEQ = name + "=";
-      var ca = document.cookie.split(';');
-      for(var i=0;i < ca.length;i++) {
-          var c = ca[i];
-          while (c.charAt(0)==' ') c = c.substring(1,c.length);
-          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-      }
-      return null;
+  else var expires = "";
+  document.cookie = name+"="+value+expires+"; path=/";
+}
+function getCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+    var c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
   }
-  
-  
-
-  function deleteCookie(name) {
-      setCookie(name,"",-1);
-  }
+  return null;
+}
+function deleteCookie(name) {
+  setCookie(name,"",-1);
+}
 
 
 /*
@@ -189,38 +107,84 @@ CORE CODE
 ////////////////////////////////////////
 */
 
-// getting today's date for query AND for displaying
-var todaysDateRaw = new Date();
-var todaysDate = todaysDateRaw.toString('MM-dd-yy');
-console.log("Showing workout for " + todaysDate);
-
-// displaying
-$("h4").append(todaysDate);
-
 // getting cookie values
-/*
 var nameSet = getCookie('tp_username');
 var passSet = getCookie('tp_password');
 
+// getting today's date for query AND for displaying
+var todaysDateRaw = new Date();
+var todaysDate = todaysDateRaw.toString('MM-dd-yy');
+
+// checking if cookie has been set. if it has, show the workout. otherwise, show the form.
 if((nameSet != null) && (passSet != null)) {
-  showWorkout();
+  showWorkout(nameSet,passSet);
+  console.log("Cookie detected for user: " + nameSet);
 } else {
   showForm();
+  console.log("No cookie detected. Showing form");
 }
-*/
 
-// when login form is submitted OR if cookie with username/pass exists
-
-//function showWorkout(){
-
-$('#tp_submit').click(function() {
-  var username = $('[name=username]').val();
-	var password = $('[name=password]').val();
-	
-	setCookie('tp_username', username, 1);
-	setCookie('tp_password', password, 1);
-	
-	
+// function for parsing the xml data and synthesizing it on the presentation layer
+function parseXml(xml){
+  $(xml).find("Workout").each(function(){
+    
+    var i = "single";
+    
+    // appending the html scaffolding to the dom
+    $("#workouts").append('<div class="result_item" id="workoutresult_' + i + '"><h1></h1><h2></h2><p class="warmup"></p><p class="workout"></p><p class="cooldown"></p></div>');
+    
+    // grabbing the workout title
+    var workoutTitle = $(this).find("Title").text();
+    
+    // grabbing the day, converting, stripping out weirdness
+    var workoutDayRaw = $(this).find("WorkoutDay").text();
+    var convertingToParse = xmlDateToJavascriptDate(workoutDayRaw);
+    var rawDateObject = new Date(convertingToParse);
+    var workoutDay = rawDateObject.toString('MM-dd');
+    
+    // grabbing the workout duration, converting to minutes
+    var workoutTimeRaw = $(this).find("PlannedTimeTotalInSeconds").text();
+    var workoutTime = workoutTimeRaw/60;
+    
+    // grabbing the workout description(s)
+    var workoutDesc = $(this).find("Description").text();
+    var workoutCoach = $(this).find("CoachComments").text();      
+    
+    // parsing out warmup text from description
+    var workoutTextWuRaw = workoutDesc.split("WU:");
+    var workoutTextWu= workoutTextWuRaw[1].split("MS:");
+    var warmupText = workoutTextWu[0];
+    
+    // parsing out workout text from description
+    var workoutTextWoRaw = workoutDesc.split("MS:");
+    var workoutTextWo= workoutTextWoRaw[1].split("CD:");
+    var workoutText = workoutTextWo[0];
+    
+    // parsing out cool down text from description
+    var workoutTextCdRaw = workoutDesc.split("CD:");
+    var workoutTextCd= workoutTextCdRaw[1].split("CD:");
+    var cooldownText = workoutTextCd[0];
+          
+    // appending data to the presentation
+    $("#workoutresult_" + i + " h1").append(workoutTitle);
+    $("#workoutresult_" + i + " h2").append(workoutTime + " min");
+    $("#workoutresult_" + i + " .warmup").append(warmupText);
+    $("#workoutresult_" + i + " .workout").append(workoutText + workoutCoach);
+    $("#workoutresult_" + i + " .cooldown").append(cooldownText);      
+    
+    // appending the date at the very bottom of the presentation
+    $("h4").append(todaysDate);
+    
+    // hiding the form, showing the workout
+    $("#workouts").show();
+    $("h4").show();
+    $("#tp_form").hide();
+  });
+}
+  
+function showWorkout(username,password){  
+  console.log("Showing workout for " + todaysDate);
+  
   // path to the json we're pulling
   var logUrl = "proxy.php?username=" + username + "&password=" + password + "&startDate=" + todaysDate + "&endDate=" + todaysDate;
 
@@ -231,70 +195,33 @@ $('#tp_submit').click(function() {
     dataType: "xml",
     success: parseXml
   });
-  
-  var i = 0;
-  
-  function parseXml(xml) {
-    //find every Workout and print the date and description
-    $(xml).find("Workout").each(function() {
-      
-      i += 1;
-      
-      $("#workouts").append('<div class="result_item" id="workoutresult_' + i + '"><h1></h1><h2></h2><p class="warmup"></p><p class="workout"></p><p class="cooldown"></p></div>');
-      
-      var workoutTitle = $(this).find("Title").text();
-      
-      var workoutDayRaw = $(this).find("WorkoutDay").text();
-      var convertingToParse = xmlDateToJavascriptDate(workoutDayRaw);
-      var rawDateObject = new Date(convertingToParse);
-      var workoutDay = rawDateObject.toString('MM-dd');
-      
-      var workoutTimeRaw = $(this).find("PlannedTimeTotalInSeconds").text();
-      var workoutTime = workoutTimeRaw/60;
-      
-      var workoutDesc = $(this).find("Description").text();
-      var workoutCoach = $(this).find("CoachComments").text();      
-      
-      console.log(workoutDesc);
-      
-      // parsing out warmup text
-      var workoutTextWuRaw = workoutDesc.split("WU:");
-      var workoutTextWu= workoutTextWuRaw[1].split("MS:");
-      var warmupText = workoutTextWu[0];
-      
-      // parsing out workout text
-      var workoutTextWoRaw = workoutDesc.split("MS:");
-      var workoutTextWo= workoutTextWoRaw[1].split("CD:");
-      var workoutText = workoutTextWo[0];
-      
-      // parsing out cool down text
-      var workoutTextCdRaw = workoutDesc.split("CD:");
-      var workoutTextCd= workoutTextCdRaw[1].split("CD:");
-      var cooldownText = workoutTextCd[0];
-            
-      $("#workoutresult_" + i + " h1").append(workoutTitle);
-      //$("#workoutresult_" + i).append(workoutDay);
-      $("#workoutresult_" + i + " h2").append(workoutTime + " min");
-      $("#workoutresult_" + i + " .warmup").append(warmupText);
-      $("#workoutresult_" + i + " .workout").append(workoutText + workoutCoach);
-      $("#workoutresult_" + i + " .cooldown").append(cooldownText);      
-      
-      $("#workouts").show();
-      $("h4").show();
-      $("#tp_form").hide();
-    });
-  }
+}
+
+// showing the form, making sure workouts are hidden
+function showForm(){
+  $("#workouts").hide();
+  $("h4").hide();
+  $("#tp_form").show();
+}
+
+// click handler. assigns cookie, passes cookie variables to the showWorkout function
+$('#tp_submit').click(function() {
+  var username = $('[name=username]').val();
+	var password = $('[name=password]').val();
+	
+	setCookie('tp_username', username, 1);
+	setCookie('tp_password', password, 1);
+	
+	showWorkout(username,password);
 });
-
-
 });
 
 </script>
 
 </head>
 <body>
-    <div id="workouts" style="display: none;"></div>
-    <h4 style="display: none;">Workout for </h4>
+    <div id="workouts"></div>
+    <h4>Workout for </h4>
     
     <div id="tp_form">
       <h1>WATTS</h1>
