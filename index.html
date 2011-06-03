@@ -32,7 +32,7 @@
   #tp_form{background:url(watts-logo.png) top center no-repeat;padding:100px 20px 20px 20px;margin:20px auto 0px auto;width:280px;}
   fieldset{margin-bottom:10px;}
   input{background:#fff;border:1px solid #ccc;color:#444;font:Normal 14px/17px "Helvetica Neue",helvetica,arial,sans-serif;border-radius:5px;padding:10px;width:260px;margin:10px auto 0px auto;}
-  #tp_submit{background:#67B2A6;border:1px solid #45867A;color:#fff;font-weight:bold;width:280px;}
+  #tp_submit{cursor:pointer;background:#67B2A6;border:1px solid #45867A;color:#fff;font-weight:bold;width:280px;}
   #tp_submit:hover{background:#45867A;}
   #workouts,#tp_form{display:none;}
 </style>
@@ -158,20 +158,34 @@ function showWorkout(xml){
     var workoutDesc = $(this).find("Description").text();
     var workoutCoach = $(this).find("CoachComments").text();      
     
-    // parsing out warmup text from description
-    var workoutTextWuRaw = workoutDesc.split("WU:");
-    var workoutTextWu= workoutTextWuRaw[1].split("MS:");
-    var warmupText = workoutTextWu[0];
+    // if warmup exists, add it to the description
+    if (workoutDesc.indexOf('WU:') != -1) {      
+      // parsing out warmup text from description
+      var workoutTextWuRaw = workoutDesc.split("WU:");
+      var workoutTextWu= workoutTextWuRaw[1].split("MS:");
+      var warmupText = workoutTextWu[0];
+    } else {
+      var warmupText = "No warmup."
+    }
     
-    // parsing out workout text from description
-    var workoutTextWoRaw = workoutDesc.split("MS:");
-    var workoutTextWo= workoutTextWoRaw[1].split("CD:");
-    var workoutText = workoutTextWo[0];
+    // if workout exists in a structure, split it, otherwise, just show the full description
+    if (workoutDesc.indexOf('MS:') != -1) {      
+      // parsing out workout text from description
+      var workoutTextWoRaw = workoutDesc.split("MS:");
+      var workoutTextWo= workoutTextWoRaw[1].split("CD:");
+      var workoutText = workoutTextWo[0];
+    } else {
+      var workoutText = workoutDesc;
+    }
     
-    // parsing out cool down text from description
-    var workoutTextCdRaw = workoutDesc.split("CD:");
-    var workoutTextCd= workoutTextCdRaw[1].split("CD:");
-    var cooldownText = workoutTextCd[0];
+    if (workoutDesc.indexOf('CD:') != -1) {      
+      // parsing out cool down text from description
+      var workoutTextCdRaw = workoutDesc.split("CD:");
+      var workoutTextCd= workoutTextCdRaw[1].split("CD:");
+      var cooldownText = workoutTextCd[0];
+    } else {
+      var cooldownText = "No cooldown."
+    }
           
     // appending data to the presentation
     $("#workoutresult h1").append(workoutTitle);
@@ -245,28 +259,27 @@ $('#clear_user').click(function() {
 
 </head>
 <body>
-    <div id="tp_form">
-      <form id="form" onsubmit="return false;">
-        <fieldset>
-          <label><input type="text" name="username" placeholder="TrainingPeaks Username" /></label>
-          <label><input type="password" name="password" placeholder="Password" /></label>
-        </fieldset>
-        <fieldset>
-          <input type="submit" id="tp_submit" value="Get Today's Workout">
-        </fieldset>
-      </form>
+  <div id="tp_form">
+    <form id="form" onsubmit="return false;">
+      <fieldset>
+        <label><input type="text" name="username" placeholder="TrainingPeaks Username" /></label>
+        <label><input type="password" name="password" placeholder="Password" /></label>
+      </fieldset>
+      <fieldset>
+        <input type="submit" id="tp_submit" value="Get Today's Workout">
+      </fieldset>
+    </form>
+  </div>
+  
+  <div id="workouts">
+    <div class="result_item" id="workoutresult">
+      <h1></h1>
+      <h2></h2>
+      <p class="warmup"></p>
+      <p class="workout"></p>
+      <p class="cooldown"></p>
     </div>
-    
-    <div id="workouts">
-      <div class="result_item" id="workoutresult">
-        <h1></h1>
-        <h2></h2>
-        <p class="warmup"></p>
-        <p class="workout"></p>
-        <p class="cooldown"></p>
-      </div>
-      <h4>Workout for <span></span><a id="clear_user" href="#">&times;</a></h4>
-      
-    </div>
+    <h4>Workout for <span></span><a id="clear_user" href="#">&times;</a></h4>
+  </div>
 </body>
 </html>
