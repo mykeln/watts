@@ -45,7 +45,7 @@
 <script type="text/javascript">  
 $(function(){
   
-  window.scrollTo(0, 1);
+  window.scrollTo(0, 0);
   
 /*
 ////////////////////////////////////////
@@ -244,7 +244,10 @@ $('#clear_user').click(function() {
   deleteCookie('tp_password');
   
   // clearing the contents of the workouts div
-  $('#workouts').html('');
+  $('#workouts h1').html('');
+  $('#workouts h2').html('');
+  $('#workouts p').html('');
+  
   
   console.log("Removing association with user");
   
