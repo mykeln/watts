@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>TrainingPeaks</title>
+<title>Watts</title>
 
 <meta name = "viewport" content = "width = device-width">
 <meta name = "viewport" content = "initial-scale = 1.0">
@@ -11,7 +11,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
 
-<link rel="apple-touch-startup-image" href="startup.png" />
+<link rel="apple-touch-startup-image" sizes="320x460" href="startup.png" />
+<link rel="apple-touch-startup-image" sizes="640x920" href="startup-iphone4.png" />
+
 <link rel="apple-touch-icon-precomposed" href="touch-icon-iphone-precompose.png" />
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="touch-icon-ipad.png" />
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="touch-icon-iphone4.png" />
@@ -19,15 +21,17 @@
 <!-- styles -->
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/reset/reset-min.css">
 <style type="text/css">
-  body,html{background-color:#efefef;}
+  body,html{background:#33262e}
   h1{background:#733230;padding:20px;text-align:center;color:#fff;font:Bold 30px/33px "Helvetica Neue",helvetica,arial,sans-serif;}
   h2{background:#67B2A6;border-radius:20px;color:#FFFFFF;font:bold 14px/17px "Helvetica Neue",helvetica,arial,sans-serif;margin:-27px auto 0;padding:0;position:relative;text-align:center;text-shadow:2px 2px 0 #45867A;top:10px;width:100px;z-index:2;padding:5px;}
   h4{color:#ccc;text-align:center;font:Bold 25px/28px "Helvetica Neue",helvetica,arial,sans-serif;padding:5px;}
+  h4 a{color:red;text-decoration:none;margin-left:10px;}
+  h5{color:#fff;text-align:center;font:normal 18px/21px "Helvetica Neue",helvetica,arial,sans-serif;position:absolute;bottom:10px;}
   p{padding:20px;font:Normal 18px/21px "Helvetica Neue",helvetica,arial,sans-serif;color:#fff;}
   .warmup{background:#ff4242;}
   .workout{background:#6cc792;}
   .cooldown{background:#33262E;}
-  #tp_form{padding:20px;margin:0px auto;width:280px;}
+  #tp_form{background:url(watts-logo.png) top center no-repeat;padding:100px 20px 20px 20px;margin:20px auto 0px auto;width:280px;}
   fieldset{margin-bottom:10px;}
   input{background:#fff;border:1px solid #ccc;color:#444;font:Normal 14px/17px "Helvetica Neue",helvetica,arial,sans-serif;border-radius:5px;padding:10px;width:260px;margin:10px auto 0px auto;}
   #tp_submit{background:#67B2A6;border:1px solid #45867A;color:#fff;font-weight:bold;width:280px;}
@@ -98,6 +102,17 @@ function deleteCookie(name) {
   setCookie(name,"",-1);
 }
 
+function toggleBackground(state){
+  if(state == false){
+    // removing the background on the body and html
+    $('body').css('background-color', '#efefef');
+    $('html').css('background-color', '#efefef');
+  } else {
+    $('body').css('background-color', '#33262e');
+    $('html').css('background-color', '#33262e');
+  }
+}
+
 
 /*
 ////////////////////////////////////////
@@ -117,7 +132,7 @@ var todaysDate = todaysDateRaw.toString('MM-dd-yy');
 
 // checking if cookie has been set. if it has, show the workout. otherwise, show the form.
 if((nameSet != null) && (passSet != null)) {
-  showWorkout(nameSet,passSet);
+  queryTrainingPeaks(nameSet,passSet);
   console.log("Cookie detected for user: " + nameSet);
 } else {
   showForm();
@@ -125,7 +140,7 @@ if((nameSet != null) && (passSet != null)) {
 }
 
 // function for parsing the xml data and synthesizing it on the presentation layer
-function parseXml(xml){
+function showWorkout(xml){
   $(xml).find("Workout").each(function(){
     
     var i = "single";
@@ -173,8 +188,11 @@ function parseXml(xml){
     $("#workoutresult_" + i + " .cooldown").append(cooldownText);      
     
     // appending the date at the very bottom of the presentation
-    $("h4").append(todaysDate);
+    $("h4 span").html(todaysDate);
     
+    // removing the background on the body and html
+    toggleBackground(false);
+        
     // hiding the form, showing the workout
     $("#workouts").show();
     $("h4").show();
@@ -182,7 +200,7 @@ function parseXml(xml){
   });
 }
   
-function showWorkout(username,password){  
+function queryTrainingPeaks(username,password){  
   console.log("Showing workout for " + todaysDate);
   
   // path to the json we're pulling
@@ -193,7 +211,7 @@ function showWorkout(username,password){
     type: "GET",
     url: logUrl,
     dataType: "xml",
-    success: parseXml
+    success: showWorkout
   });
 }
 
@@ -204,7 +222,7 @@ function showForm(){
   $("#tp_form").show();
 }
 
-// click handler. assigns cookie, passes cookie variables to the showWorkout function
+// click handler. assigns cookie, passes cookie variables to the queryTrainingPeaks function
 $('#tp_submit').click(function() {
   var username = $('[name=username]').val();
 	var password = $('[name=password]').val();
@@ -212,19 +230,34 @@ $('#tp_submit').click(function() {
 	setCookie('tp_username', username, 1);
 	setCookie('tp_password', password, 1);
 	
-	showWorkout(username,password);
+	queryTrainingPeaks(username,password);
 });
+
+// removing the user, sending back to form
+$('#clear_user').click(function() {
+  deleteCookie('tp_username');
+  deleteCookie('tp_password');
+  
+  // clearing the contents of the workouts div
+  $('#workouts').html('');
+  
+  console.log("Removing association with user");
+  
+  toggleBackground(true);
+  
+  showForm();
 });
+
+}); // end of document ready
 
 </script>
 
 </head>
 <body>
     <div id="workouts"></div>
-    <h4>Workout for </h4>
+    <h4>Workout for <span></span><a id="clear_user" href="#">&times;</a></h4>
     
     <div id="tp_form">
-      <h1>WATTS</h1>
       <form id="form" onsubmit="return false;">
         <fieldset>
           <label><input type="text" name="username" placeholder="TrainingPeaks Username" /></label>
