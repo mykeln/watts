@@ -10,7 +10,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-
 <link rel="apple-touch-startup-image" href="startup.png" />
 
 <link rel="apple-touch-icon-precomposed" href="touch-icon-iphone-precompose.png" />
@@ -35,7 +34,7 @@
   input{background:#fff;border:1px solid #ccc;color:#444;font:Normal 14px/17px "Helvetica Neue",helvetica,arial,sans-serif;border-radius:5px;padding:10px;width:260px;margin:10px auto 0px auto;}
   #tp_submit{background:#67B2A6;border:1px solid #45867A;color:#fff;font-weight:bold;width:280px;}
   #tp_submit:hover{background:#45867A;}
-  #workouts,h4,#tp_form{display:none;}
+  #workouts,#tp_form{display:none;}
 </style>
 
 <!-- scripts -->
@@ -142,11 +141,6 @@ if((nameSet != null) && (passSet != null)) {
 function showWorkout(xml){
   $(xml).find("Workout").each(function(){
     
-    var i = "single";
-    
-    // appending the html scaffolding to the dom
-    $("#workouts").append('<div class="result_item" id="workoutresult_' + i + '"><h1></h1><h2></h2><p class="warmup"></p><p class="workout"></p><p class="cooldown"></p></div>');
-    
     // grabbing the workout title
     var workoutTitle = $(this).find("Title").text();
     
@@ -180,11 +174,11 @@ function showWorkout(xml){
     var cooldownText = workoutTextCd[0];
           
     // appending data to the presentation
-    $("#workoutresult_" + i + " h1").append(workoutTitle);
-    $("#workoutresult_" + i + " h2").append(workoutTime + " min");
-    $("#workoutresult_" + i + " .warmup").append(warmupText);
-    $("#workoutresult_" + i + " .workout").append(workoutText + workoutCoach);
-    $("#workoutresult_" + i + " .cooldown").append(cooldownText);      
+    $("#workoutresult h1").append(workoutTitle);
+    $("#workoutresult h2").append(workoutTime + " min");
+    $("#workoutresult .warmup").append(warmupText);
+    $("#workoutresult .workout").append(workoutText + workoutCoach);
+    $("#workoutresult .cooldown").append(cooldownText);      
     
     // appending the date at the very bottom of the presentation
     $("h4 span").html(todaysDate);
@@ -194,7 +188,6 @@ function showWorkout(xml){
         
     // hiding the form, showing the workout
     $("#workouts").show();
-    $("h4").show();
     $("#tp_form").hide();
   });
 }
@@ -217,7 +210,6 @@ function queryTrainingPeaks(username,password){
 // showing the form, making sure workouts are hidden
 function showForm(){
   $("#workouts").hide();
-  $("h4").hide();
   $("#tp_form").show();
 }
 
@@ -253,9 +245,6 @@ $('#clear_user').click(function() {
 
 </head>
 <body>
-    <div id="workouts"></div>
-    <h4>Workout for <span></span><a id="clear_user" href="#">&times;</a></h4>
-    
     <div id="tp_form">
       <form id="form" onsubmit="return false;">
         <fieldset>
@@ -266,6 +255,18 @@ $('#clear_user').click(function() {
           <input type="submit" id="tp_submit" value="Get Today's Workout">
         </fieldset>
       </form>
+    </div>
+    
+    <div id="workouts">
+      <div class="result_item" id="workoutresult">
+        <h1></h1>
+        <h2></h2>
+        <p class="warmup"></p>
+        <p class="workout"></p>
+        <p class="cooldown"></p>
+      </div>
+      <h4>Workout for <span></span><a id="clear_user" href="#">&times;</a></h4>
+      
     </div>
 </body>
 </html>
