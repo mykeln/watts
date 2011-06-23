@@ -232,8 +232,8 @@ $('#tp_submit').click(function() {
   var username = $('[name=username]').val();
 	var password = $('[name=password]').val();
 	
-	setCookie('tp_username', username, 1);
-	setCookie('tp_password', password, 1);
+	setCookie('tp_username', username, 9999);
+	setCookie('tp_password', password, 9999);
 	
 	queryTrainingPeaks(username,password);
 });
