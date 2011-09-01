@@ -139,76 +139,110 @@ if((nameSet != null) && (passSet != null)) {
 
 // function for parsing the xml data and synthesizing it on the presentation layer
 function showWorkout(xml){
-  $(xml).find("Workout").each(function(){
+  var workoutTitle;
+  var workoutTime;
+  var warmupText;
+  var workoutText;
+  var workoutCoach;
+  var cooldownText;
+  
+  // looking for a workout object
+  var Workouts = $(xml).find("Workout");
+  
+  // if a workout object exists, process it
+  if (Workouts[0]) {
+    Workouts.each(function() {
+      console.log("Showing workout for " + todaysDate);
+
+      // grabbing the workout title
+      workoutTitle = $(this).find("Title").text();
     
-    // grabbing the workout title
-    var workoutTitle = $(this).find("Title").text();
+      // if the workout title is empty, name a default one
+      if (workoutTitle == "") {
+        workoutTitle = "Today's Workout"
+      }
     
-    // grabbing the day, converting, stripping out weirdness
-    var workoutDayRaw = $(this).find("WorkoutDay").text();
-    var convertingToParse = xmlDateToJavascriptDate(workoutDayRaw);
-    var rawDateObject = new Date(convertingToParse);
-    var workoutDay = rawDateObject.toString('MM-dd');
+      // grabbing the day, converting, stripping out weirdness
+      var workoutDayRaw = $(this).find("WorkoutDay").text();
+      var convertingToParse = xmlDateToJavascriptDate(workoutDayRaw);
+      var rawDateObject = new Date(convertingToParse);
+      var workoutDay = rawDateObject.toString('MM-dd');
     
-    // grabbing the workout duration, converting to minutes
-    var workoutTimeRaw = $(this).find("PlannedTimeTotalInSeconds").text();
-    var workoutTime = workoutTimeRaw/60;
+      // grabbing the workout duration, converting to minutes
+      var workoutTimeRaw = $(this).find("PlannedTimeTotalInSeconds").text();
+      workoutTime = workoutTimeRaw/60;
     
-    // grabbing the workout description(s)
-    var workoutDesc = $(this).find("Description").text();
-    var workoutCoach = $(this).find("CoachComments").text();      
+      // grabbing the workout description(s)
+      var workoutDesc = $(this).find("Description").text();
+      workoutCoach = $(this).find("CoachComments").text();      
     
-    // if warmup exists, add it to the description
-    if (workoutDesc.indexOf('WU:') != -1) {      
-      // parsing out warmup text from description
-      var workoutTextWuRaw = workoutDesc.split("WU:");
-      var workoutTextWu= workoutTextWuRaw[1].split("MS:");
-      var warmupText = workoutTextWu[0];
-    } else {
-      var warmupText = "No warm up."
-    }
+      // if warmup exists, add it to the description
+      if (workoutDesc.indexOf('WU:') != -1) {      
+        // parsing out warmup text from description
+        var workoutTextWuRaw = workoutDesc.split("WU:");
+        var workoutTextWu= workoutTextWuRaw[1].split("MS:");
+        warmupText = workoutTextWu[0];
+      } else {
+        warmupText = "No warm up."
+      }
     
-    // if workout exists in a structure, split it, otherwise, just show the full description
-    if (workoutDesc.indexOf('MS:') != -1) {      
-      // parsing out workout text from description
-      var workoutTextWoRaw = workoutDesc.split("MS:");
-      var workoutTextWo= workoutTextWoRaw[1].split("CD:");
-      var workoutText = workoutTextWo[0];
-    } else {
-      var workoutText = workoutDesc;
-    }
+      // if workout exists in a structure, split it, otherwise, just show the full description
+      if (workoutDesc.indexOf('MS:') != -1) {      
+        // parsing out workout text from description
+        var workoutTextWoRaw = workoutDesc.split("MS:");
+        var workoutTextWo= workoutTextWoRaw[1].split("CD:");
+        workoutText = workoutTextWo[0];
+      } else {
+        workoutText = workoutDesc;
+      }
     
-    if (workoutDesc.indexOf('CD:') != -1) {      
-      // parsing out cool down text from description
-      var workoutTextCdRaw = workoutDesc.split("CD:");
-      var workoutTextCd= workoutTextCdRaw[1].split("CD:");
-      var cooldownText = workoutTextCd[0];
-    } else {
-      var cooldownText = "No cool down."
-    }
-          
-    // appending data to the presentation
-    $("#workoutresult h1").append(workoutTitle);
-    $("#workoutresult h2").append(workoutTime + " min");
-    $("#workoutresult .warmup").append(warmupText);
-    $("#workoutresult .workout").append(workoutText + workoutCoach);
-    $("#workoutresult .cooldown").append(cooldownText);      
+      if (workoutDesc.indexOf('CD:') != -1) {      
+        // parsing out cool down text from description
+        var workoutTextCdRaw = workoutDesc.split("CD:");
+        var workoutTextCd= workoutTextCdRaw[1].split("CD:");
+        cooldownText = workoutTextCd[0];
+      } else {
+        cooldownText = "No cool down."
+      }
+      
+      presentData(workoutTitle, workoutTime, warmupText, workoutText, workoutCoach, cooldownText, todaysDate);
+
+    });
+  } else { // no workout found
+    console.log("No workout for " + todaysDate);
     
-    // appending the date at the very bottom of the presentation
-    $("h4 span").html(todaysDate);
+    workoutTitle = "No workout today";
+    workoutTime = 0;
+    warmupText = "No warmup.";
+    workoutText = "No workout.";
+    workoutCoach = "";
+    cooldownText = "No cool down.";
     
-    // removing the background on the body and html
-    toggleBackground(false);
-        
-    // hiding the form, showing the workout
-    $("#workouts").show();
-    $("#tp_form").hide();
-  });
+    presentData(workoutTitle, workoutTime, warmupText, workoutText, workoutCoach, cooldownText, todaysDate);
+    
+  }
+}
+
+function presentData(workoutTitle, workoutTime, warmupText, workoutText, workoutCoach, cooldownText, todaysDate) {      
+  // appending data to the presentation
+  $("#workoutresult h1").append(workoutTitle);
+  $("#workoutresult h2").append(workoutTime + " minutes");
+  $("#workoutresult .warmup").append(warmupText);
+  $("#workoutresult .workout").append(workoutText + workoutCoach);
+  $("#workoutresult .cooldown").append(cooldownText);      
+
+  // appending the date at the very bottom of the presentation
+  $("h4 span").html(todaysDate);
+
+  // removing the background on the body and html
+  toggleBackground(false);
+  
+  // hiding the form, showing the workout
+  $("#workouts").show();
+  $("#tp_form").hide();
 }
   
 function queryTrainingPeaks(username,password){  
-  console.log("Showing workout for " + todaysDate);
-  
   // path to the json we're pulling
   var logUrl = "proxy.php?username=" + username + "&password=" + password + "&startDate=" + todaysDate + "&endDate=" + todaysDate;
 
