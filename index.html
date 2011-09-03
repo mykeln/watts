@@ -151,6 +151,10 @@ if((nameSet != null) && (passSet != null)) {
   console.log("No cookie detected. Showing form");
 }
 
+function errorWorkout() {
+  console.log('ererer');
+}
+
 // function for parsing the xml data and synthesizing it on the presentation layer
 function showWorkout(xml){
   var workoutTitle;
@@ -268,7 +272,8 @@ function queryTrainingPeaks(username,password){
     type: "GET",
     url: logUrl,
     dataType: "xml",
-    success: showWorkout
+    success: showWorkout,
+    fail: errorWorkout
   });
 }
 
