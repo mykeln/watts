@@ -50,6 +50,15 @@
 <script type="text/javascript">  
 $(function(){
   
+  var proxySet;
+  
+  // detecting if inside phonegap to not trigger proxy php
+  if(window.PhoneGap){
+    proxySet = "proxy.php";
+  } else {
+    proxySet = "http://www.trainingpeaks.com/tpwebservices/service.asmx/GetWorkoutsForAthlete";
+  }
+  
   window.scrollTo(0, 0);
   
 /*
@@ -252,7 +261,7 @@ function presentData(workoutTitle, workoutTime, warmupText, workoutText, workout
   
 function queryTrainingPeaks(username,password){  
   // path to the json we're pulling
-  var logUrl = "proxy.php?username=" + username + "&password=" + password + "&startDate=" + todaysDate + "&endDate=" + todaysDate;
+  var logUrl = proxySet + "?username=" + username + "&password=" + password + "&startDate=" + todaysDate + "&endDate=" + todaysDate;
 
   // grabbing xml and parsing
   $.ajax({
