@@ -54,9 +54,9 @@ $(function(){
   
   // detecting if inside phonegap to not trigger proxy php
   if(window.PhoneGap){
-    proxySet = "proxy.php";
-  } else {
     proxySet = "http://www.trainingpeaks.com/tpwebservices/service.asmx/GetWorkoutsForAthlete";
+  } else {
+    proxySet = "proxy.php";
   }
   
   window.scrollTo(0, 0);
