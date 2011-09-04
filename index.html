@@ -50,15 +50,6 @@
 <!-- core code -->
 <script type="text/javascript">  
 $(function(){
-  
-  var proxySet;
-  
-  // detecting if inside phonegap to not trigger proxy php
-  if(window.PhoneGap){
-    proxySet = "http://www.trainingpeaks.com/tpwebservices/service.asmx/GetWorkoutsForAthlete";
-  } else {
-    proxySet = "proxy.php";
-  }
     
   window.scrollTo(0, 0);
   
@@ -262,10 +253,22 @@ function presentData(workoutTitle, workoutTime, warmupText, workoutText, workout
   $("#tp_form").hide();
   
   $('#loading_message').slideUp('fast');
-  
 }
   
 function queryTrainingPeaks(username,password){
+  
+  // debug dates
+  // todaysDate = '08/01/11';
+  
+  // detecting if inside phonegap to not trigger proxy php
+  var proxySet;
+  
+  if(window.PhoneGap){
+    proxySet = "http://www.trainingpeaks.com/tpwebservices/service.asmx/GetWorkoutsForAthlete";
+  } else {
+    proxySet = "proxy.php";
+  }
+  
   // path to the json we're pulling
   var logUrl = proxySet + "?username=" + username + "&password=" + password + "&startDate=" + todaysDate + "&endDate=" + todaysDate;
 
@@ -279,8 +282,18 @@ function queryTrainingPeaks(username,password){
   });
 }
 
-function checkData(){
-  showWorkout();
+function checkData(xml){
+  // [sic] parseRerror
+  var parseError = $(xml).find("parsererror");
+  
+  // if the username/password was invalid, send back
+  if (parseError.length == 0) {
+    showWorkout(xml);
+  } else {
+    alert("The username or password was wrong.");
+    $('#loading_message').slideUp('fast');
+    clearUser();
+  }
 }
 
 // showing the form, making sure workouts are hidden
@@ -291,19 +304,29 @@ function showForm(){
 
 // click handler. assigns cookie, passes cookie variables to the queryTrainingPeaks function
 $('#tp_submit').click(function() {
+  if((!$('[name=username]').val() || (!$('[name=password]').val()))) {
+    alert('Watts needs a username and password.')
+    return false;
+  }
+
   $('#loading_message').slideDown('fast');
-  
+
   var username = $('[name=username]').val();
 	var password = $('[name=password]').val();
-	
+
 	setCookie('tp_username', username, 9999);
 	setCookie('tp_password', password, 9999);
-	
-	queryTrainingPeaks(username,password);	
+
+	queryTrainingPeaks(username,password);
+    
 });
 
 // removing the user, sending back to form
 $('#clear_user').click(function() {
+  clearUser();
+});
+
+function clearUser(){
   deleteCookie('tp_username');
   deleteCookie('tp_password');
   
@@ -311,14 +334,17 @@ $('#clear_user').click(function() {
   $('#workouts h1').html('');
   $('#workouts h2').html('');
   $('#workouts p').html('');
-  
-  
+
   console.log("Removing association with user");
   
   toggleBackground(true);
   
+  // clearing login form values
+  $('[name=username]').val('');
+  $('[name=password]').val('');
+  
   showForm();
-});
+}
 
 }); // end of document ready
 
