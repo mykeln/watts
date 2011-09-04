@@ -4,9 +4,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Watts</title>
 
-<meta name = "viewport" content = "width = device-width">
-<meta name = "viewport" content = "initial-scale = 1.0">
-<meta name = "viewport" content = "user-scalable = no">
+<meta name="viewport" content = "width = device-width">
+<meta name="viewport" content = "initial-scale = 1.0">
+<meta name="viewport" content = "user-scalable = no">
+
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
@@ -35,7 +36,7 @@
   #tp_submit{cursor:pointer;background:#67B2A6;border:1px solid #45867A;color:#fff;font-weight:bold;width:280px;-webkit-appearance: none;}
   #tp_submit:hover{background:#45867A;}
   #workouts,#tp_form{display:none;-webkit-overflow-scrolling:touch;}
-  #loading_message{height:30px;display:none;position:absolute;background-color:#fff;width:100%;text-align:center;padding:10px;font:Bold 30px/33px "Helvetica Neue",helvetica,arial,sans-serif;color:#444;}
+  #loading_message{height:30px;display:none;position:absolute;background-color:#fff;width:100%;text-align:center;padding:10px;font:Bold 20px/23px "Helvetica Neue",helvetica,arial,sans-serif;color:#444;}
 </style>
     
 <style type="text/css" media="only screen and (-webkit-min-device-pixel-ratio:2)">
@@ -151,8 +152,9 @@ if((nameSet != null) && (passSet != null)) {
   console.log("No cookie detected. Showing form");
 }
 
-function errorWorkout() {
-  console.log('ererer');
+function errorWorkout(message) {
+  console.log(message);
+  return false;
 }
 
 // function for parsing the xml data and synthesizing it on the presentation layer
@@ -263,7 +265,7 @@ function presentData(workoutTitle, workoutTime, warmupText, workoutText, workout
   
 }
   
-function queryTrainingPeaks(username,password){  
+function queryTrainingPeaks(username,password){
   // path to the json we're pulling
   var logUrl = proxySet + "?username=" + username + "&password=" + password + "&startDate=" + todaysDate + "&endDate=" + todaysDate;
 
@@ -272,9 +274,13 @@ function queryTrainingPeaks(username,password){
     type: "GET",
     url: logUrl,
     dataType: "xml",
-    success: showWorkout,
-    fail: errorWorkout
+    success: checkData,
+    error: function(){ errorWorkout("Couldn't grab!"); }
   });
+}
+
+function checkData(){
+  showWorkout();
 }
 
 // showing the form, making sure workouts are hidden
